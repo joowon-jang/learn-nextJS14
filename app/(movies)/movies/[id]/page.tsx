@@ -1,7 +1,25 @@
-import { use } from "react";
+import { API_URL } from '../../../(home)/page';
 
-export default function MovieDetail(props: { params: Promise<{ id: string }> }) {
-  const params = use(props.params);
-  const { id } = params;
-  return <h1>Movie {id}</h1>;
+async function getMovie(id: string) {
+  console.log(new Date());
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await fetch(`${API_URL}/${id}`);
+  return await response.json();
+}
+
+async function getVideos(id: string) {
+  console.log(new Date());
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await fetch(`${API_URL}/${id}/videos`);
+  return await response.json();
+}
+
+export default async function MovieDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  console.log('start fetching');
+  const [movie, videos] = await Promise.all([getMovie(id), getVideos(id)]);
+  console.log('end fetching');
+
+  return <h1>{movie.title}</h1>;
 }
